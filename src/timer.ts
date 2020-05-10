@@ -1,44 +1,26 @@
-interface TickEvent {
-  hours: number;
-  minutes: number;
-  seconds: number;
-}
+import { TickEvent } from './tick-event';
 
-interface TimerEvents {
-  tick(t: TickEvent): void;
-  expires(): void;
-}
-
-class Timer {
+export type tickListener = (t: TickEvent) => void;
+export class Timer {
   private remainingSeconds: number;
   private running: boolean;
   private timer?: number; // timer for the ticker
 
   // listeners
-  private onTicklisteners: Set<TimerEvents['tick']>;
-  private onExpireslisteners: Set<TimerEvents['expires']>;
+  private onTicklisteners: Set<tickListener>;
 
   constructor(seconds: number) {
     this.remainingSeconds = seconds;
     this.running = false;
     this.onTicklisteners = new Set();
-    this.onExpireslisteners = new Set();
   }
 
-  onTick(f: TimerEvents['tick']) {
+  onTick(f: tickListener) {
     this.onTicklisteners.add(f);
   }
 
-  offTick(f: TimerEvents['tick']): void {
+  offTick(f: tickListener): void {
     this.onTicklisteners.delete(f);
-  }
-
-  onExpires(f: TimerEvents['expires']) {
-    this.onExpireslisteners.add(f);
-  }
-
-  offExpires(f: TimerEvents['expires']): void {
-    this.onExpireslisteners.delete(f);
   }
 
   resume() {
@@ -50,10 +32,9 @@ class Timer {
         const hours = Math.floor(this.remainingSeconds / (60 * 60));
         const minutes = Math.floor((this.remainingSeconds % (60 * 60)) / 60);
         const seconds = Math.floor(this.remainingSeconds % 60);
-        this.onTicklisteners.forEach((listener) => listener({ hours, minutes, seconds }));
+        this.onTicklisteners.forEach((listener) => listener(new TickEvent(hours, minutes, seconds)));
       }
       if (this.remainingSeconds < 1) {
-        this.onExpireslisteners.forEach((listener) => listener());
         this.pause();
       } else {
         this.remainingSeconds -= 1;
