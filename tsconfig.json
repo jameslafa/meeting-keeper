@@ -1,8 +1,18 @@
 {
   "compilerOptions": {
-    "target": "es2017",
     "module": "commonjs",
     "outDir": "out",
-    "sourceMap": true
-  }
+    "sourceMap": true,
+    "declaration": true,
+    "moduleResolution": "node",
+    "newLine": "LF",
+    "lib": ["es2017", "dom"],
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src/**/*"],
+  "exclude": [".git", "node_modules"]
 }
