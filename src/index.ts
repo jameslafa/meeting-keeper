@@ -1,6 +1,5 @@
 import { MeetingStep } from './meeting-step';
 import { Meeting } from './meeting';
-import { TickEvent } from './tick-event';
 import { humanReadableDurationToString, HumanReadableDuration } from './human-readable-duration';
 
 // updateTimer updates the timer values on the page.
@@ -26,16 +25,19 @@ function updateSteps(meeting: Meeting) {
   for (let i = 0; i < meeting.steps().length; i++) {
     const step = meeting.steps()[i];
     const elemClass = step.id === meeting.currentStep().id ? 'step active' : 'step';
-    domElements[i] = `<div class="${elemClass}" id="${step.id}">${step.name} [${humanReadableDurationToString(
-      step.humanReadableDuration()
-    )}]</div>`;
+    domElements[i] = `<div class="${elemClass}" id="${step.id}">${
+      step.name
+    } <span class="duration">${humanReadableDurationToString(step.humanReadableDuration())}</span></div>`;
   }
   document.getElementById('steps')!.innerHTML = domElements.join('\n');
 
   for (const step of meeting.steps()) {
     const btnElt = document.getElementById(step.id);
     if (btnElt) {
-      btnElt.addEventListener('click', () => jumpToStep(meeting, step.id));
+      btnElt.addEventListener('click', () => {
+        jumpToStep(meeting, step.id);
+        return false;
+      });
     }
   }
 }
@@ -51,7 +53,7 @@ function setupControls(meeting: Meeting) {
   if (resumeElt) {
     resumeElt.addEventListener('click', () => {
       if (!meeting.hasStarted()) {
-        resumeElt.innerText = 'resume';
+        resumeElt.innerText = 'RESUME';
         meeting.startMeeting();
       } else {
         meeting.resumeCurrentTimer();
