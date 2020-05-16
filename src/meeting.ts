@@ -1,6 +1,8 @@
 import { MeetingStep } from './meeting-step';
 import { tickListener } from './timer';
 
+export type stepChangeListener = () => void;
+
 export class Meeting {
   private steps: MeetingStep[];
   private currentStepIdx: number;
@@ -8,11 +10,13 @@ export class Meeting {
   private finishedAt?: Date;
 
   private onTicklisteners: Set<tickListener>;
+  private onStepChangeListeners: Set<stepChangeListener>;
 
   constructor(steps: MeetingStep[]) {
     this.steps = steps;
     this.currentStepIdx = 0;
     this.onTicklisteners = new Set();
+    this.onStepChangeListeners = new Set();
   }
 
   addStep(s: MeetingStep) {
@@ -43,10 +47,15 @@ export class Meeting {
       this.onTicklisteners.forEach((l) => this.currentStep().timer().offTick(l));
       this.currentStepIdx++;
       this.resume();
+      this.onStepChangeListeners.forEach((l) => l());
     }
   }
 
   onTick(f: tickListener) {
     this.onTicklisteners.add(f);
+  }
+
+  onStepChange(f: stepChangeListener) {
+    this.onStepChangeListeners.add(f);
   }
 }
