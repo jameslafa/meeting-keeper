@@ -1,5 +1,6 @@
 import { MeetingStep } from './meeting-step';
 import { tickListener } from './timer';
+import { HumanReadableDuration, secondsToHumanReadableDuration } from './human-readable-duration';
 
 export type stepChangeListener = () => void;
 
@@ -96,6 +97,11 @@ export class Meeting {
     this._currentStepIdx = stepIdx;
     this.startCurrentTimer();
     this.onStepChangeListeners.forEach((l) => l());
+  }
+
+  // totalDuration returns a HumanReadableDuration of the duration of the entire meeting.
+  totalDuration(): HumanReadableDuration {
+    return secondsToHumanReadableDuration(this._steps.reduce((acc, step) => acc + step.timeInSeconds, 0));
   }
 
   // onTick register a new tickListener.

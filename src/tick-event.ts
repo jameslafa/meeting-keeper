@@ -1,15 +1,13 @@
+import { HumanReadableDuration } from './human-readable-duration';
+
 export class TickEvent {
-  hours: number;
-  minutes: number;
-  seconds: number;
+  time: HumanReadableDuration;
 
   constructor(hours: number, minutes: number, seconds: number) {
-    this.hours = hours;
-    this.minutes = minutes;
-    this.seconds = seconds;
+    this.time = { hours, minutes, seconds };
   }
 
   isExpired(): boolean {
-    return this.hours === 0 && this.minutes === 0 && this.seconds === 0;
+    return this.time.hours === 0 && this.time.minutes === 0 && this.time.seconds === 0;
   }
 }

@@ -1,5 +1,6 @@
 import { Timer } from './timer';
 import { randomID } from './helper';
+import { HumanReadableDuration, secondsToHumanReadableDuration } from './human-readable-duration';
 
 export class MeetingStep {
   id: string;
@@ -17,5 +18,9 @@ export class MeetingStep {
 
   timer(): Timer {
     return this.stepTimer;
+  }
+
+  humanReadableDuration(): HumanReadableDuration {
+    return secondsToHumanReadableDuration(this.timeInSeconds);
   }
 }
