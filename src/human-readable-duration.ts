@@ -24,5 +24,5 @@ export function humanReadableDurationToString(h: HumanReadableDuration) {
     s.push(h.minutes.toString() + 'm');
   }
   s.push(h.seconds.toString() + 's');
-  return s.join('');
+  return s.join(' ');
 }

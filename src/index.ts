@@ -71,8 +71,13 @@ window.onload = () => {
   // create the meeting with the respective steps
   // TODO: load this from a JSON instead of hardcoding values
   const steps: MeetingStep[] = [];
-  steps.push(new MeetingStep('Introduction', 90));
-  steps.push(new MeetingStep('Product comprehension', 20));
+  steps.push(new MeetingStep('Introduction', 300));
+  steps.push(new MeetingStep('Product understanding', 600));
+  steps.push(new MeetingStep('Present team and stack', 300));
+  steps.push(new MeetingStep('Introduction candidate', 300));
+  steps.push(new MeetingStep("Candidate's ideal position", 300));
+  steps.push(new MeetingStep("Candidate's questions", 600));
+  steps.push(new MeetingStep("Process' next steps", 300));
   const meeting = new Meeting(steps);
 
   let lastTimeDuration = { hours: 0, minutes: 0, seconds: 0 };

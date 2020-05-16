@@ -45,6 +45,7 @@ body {
 
 #steps .step {
   background-color: #eee;
+  border-bottom: 1px solid #ccc;
   cursor: pointer;
   padding: 0.5rem;
 }
