@@ -20,15 +20,46 @@ function updateTimer(newTickEvent: TickEvent, lastTickEvent: TickEvent) {
 }
 
 // updateSteps update the list of steps displayed on the page.
-// currentStep is used to mark the current step as active.
-function updateSteps(steps: MeetingStep[], currentStep: MeetingStep) {
+function updateSteps(meeting: Meeting) {
   const domElements = [];
-  for (let i = 0; i < steps.length; i += 1) {
-    const step = steps[i];
-    const elemClass = step.id === currentStep.id ? 'step active' : 'step';
+  for (let i = 0; i < meeting.steps().length; i++) {
+    const step = meeting.steps()[i];
+    const elemClass = step.id === meeting.currentStep().id ? 'step active' : 'step';
     domElements[i] = `<div class="${elemClass}" id="${step.id}">${step.name} [${step.timeInSeconds} sec]</div>`;
   }
   document.getElementById('steps')!.innerHTML = domElements.join('\n');
+
+  for (const step of meeting.steps()) {
+    const btnElt = document.getElementById(step.id);
+    if (btnElt) {
+      btnElt.addEventListener('click', () => jumpToStep(meeting, step.id));
+    }
+  }
+}
+
+// jumpToStep jump to the step identified by stepId.
+function jumpToStep(meeting: Meeting, stepId: string) {
+  meeting.jumpToStep(stepId);
+}
+
+// setupControls binds controls click event.
+function setupControls(meeting: Meeting) {
+  const resumeElt = document.getElementById('resume');
+  if (resumeElt) {
+    resumeElt.addEventListener('click', () => {
+      if (!meeting.hasStarted()) {
+        resumeElt.innerText = 'resume';
+        meeting.startMeeting();
+      } else {
+        meeting.resumeCurrentTimer();
+      }
+    });
+  }
+
+  const pauseElt = document.getElementById('pause');
+  if (pauseElt) {
+    pauseElt.addEventListener('click', () => meeting.pauseCurrentTimer());
+  }
 }
 
 window.onload = () => {
@@ -38,15 +69,19 @@ window.onload = () => {
   // create the meeting with the respective steps
   // TODO: load this from a JSON instead of hardcoding values
   const steps: MeetingStep[] = [];
-  steps.push(new MeetingStep('Introduction', 5));
-  steps.push(new MeetingStep('Product comprehension', 10));
+  steps.push(new MeetingStep('Introduction', 10));
+  steps.push(new MeetingStep('Product comprehension', 20));
   const meeting = new Meeting(steps);
 
   // display the current steps
-  updateSteps(steps, meeting.currentStep());
+  updateSteps(meeting);
+
+  // setup control buttons
+  setupControls(meeting);
 
   // subcribe to tick event to update timer values
   meeting.onTick((t): void => {
+    console.debug('new tick', t);
     updateTimer(t, lastTickEvent);
     if (t.isExpired()) {
       setTimeout(() => meeting.nextStep(), 1000);
@@ -56,10 +91,7 @@ window.onload = () => {
 
   // subscribe to step changes to update the step list
   meeting.onStepChange(() => {
-    updateSteps(steps, meeting.currentStep());
+    console.debug('step changed');
+    updateSteps(meeting);
   });
-
-  // start the meeting
-  // TODO: should be initiated by a button click
-  meeting.start();
 };

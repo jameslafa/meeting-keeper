@@ -1,4 +1,8 @@
+#steps .step {
+  cursor: pointer;
+}
+
 #steps .step.active {
-    background-color: black;
-    color: white;
+  background-color: black;
+  color: white;
 }

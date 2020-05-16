@@ -24,6 +24,10 @@ export class Timer {
   }
 
   resume() {
+    if (this.running) {
+      return;
+    }
+
     this.running = true;
 
     const tick = () => {
@@ -46,6 +50,10 @@ export class Timer {
   }
 
   pause() {
+    if (!this.running) {
+      return;
+    }
+
     this.running = false;
     if (this.timer) {
       clearTimeout(this.timer);
